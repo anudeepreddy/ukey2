@@ -43,6 +43,18 @@ const (
 	HANDSHAKE_ERROR
 )
 
+type State int
+
+const (
+	IN_PROGRESS State = iota
+	VERIFICATION_NEEDED
+	VERIFICATION_IN_PROGRESS
+	FINISHED
+	ALREADY_USED
+	ERROR
+	UNKNOWN = -1
+)
+
 type handshakeRole int
 
 const (
@@ -101,6 +113,35 @@ func makeUkey2Message(messageType pb.Ukey2Message_Type, data []byte) []byte {
 		MessageData: data,
 	})
 	return ukey2Message
+}
+
+func (u *UKey2Handshake) GetHandshakeState() (State, error) {
+	switch u.internalState {
+	case CLIENT_START:
+		fallthrough
+	case CLIENT_WAITING_FOR_SERVER_INIT:
+		fallthrough
+	case CLIENT_AFTER_SERVER_INIT:
+		fallthrough
+	case SERVER_START:
+		fallthrough
+	case SERVER_WAITING_FOR_CLIENT_FINISHED:
+		fallthrough
+	case SERVER_AFTER_CLIENT_INIT:
+		return IN_PROGRESS, nil
+	case HANDSHAKE_ERROR:
+		return ERROR, nil
+	case HANDSHAKE_VERIFICATION_NEEDED:
+		return VERIFICATION_NEEDED, nil
+	case HANDSHAKE_VERIFICATION_IN_PROGRESS:
+		return VERIFICATION_IN_PROGRESS, nil
+	case HANDSHAKE_FINISHED:
+		return FINISHED, nil
+	case HANDSHAKE_ALREADY_USED:
+		return ALREADY_USED, nil
+	default:
+		return UNKNOWN, errors.New("unexpected state")
+	}
 }
 
 func (u *UKey2Handshake) makeClientInitUkey2Message() ([]byte, error) {
