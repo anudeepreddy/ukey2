@@ -28,7 +28,7 @@ if err != nil {
 	// handle error
 }
 sendMessageToServer(clientInit)
-handShakeMessage := receiveMessageFromServer()
+serverInit := receiveMessageFromServer()
 _, _, err = client.ParseHandshakeMessage(serverInit)
 if err != nil {
 	// handle error
