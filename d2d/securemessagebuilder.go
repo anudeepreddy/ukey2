@@ -3,7 +3,6 @@ package d2d
 import (
 	"bytes"
 	"errors"
-	"fmt"
 
 	"github.com/anudeepreddy/ukey2/pb"
 	"github.com/anudeepreddy/ukey2/utils"
@@ -109,9 +108,6 @@ func serializeHeaderAndBody(header []byte, body []byte) []byte {
 
 func createSignedResult(signKey []byte, sigType SigType, headerAndBody []byte, associatedData []byte) *pb.SecureMessage {
 	signature := sign(sigType, signKey, append(headerAndBody, associatedData...))
-	fmt.Println("signing ket:", signKey)
-	fmt.Println("data to be signed:", append(headerAndBody, associatedData...))
-	fmt.Println("printign signatire:", signature)
 	return &pb.SecureMessage{
 		HeaderAndBody: headerAndBody,
 		Signature:     signature,

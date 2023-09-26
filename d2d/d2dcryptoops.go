@@ -5,7 +5,6 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"errors"
-	"fmt"
 	"strconv"
 
 	"github.com/anudeepreddy/ukey2/pb"
@@ -120,8 +119,6 @@ func signCryptPayload(payload Payload, decryptKey []byte, responderHello []byte)
 }
 
 func getPurposeForSigType(sigType SigType) string {
-	// sigType.sigScheme.
-	fmt.Println("SIG:" + strconv.Itoa(int(sigType.sigScheme)))
 	return "SIG:" + strconv.Itoa(int(sigType.sigScheme))
 }
 

@@ -8,7 +8,6 @@ import (
 	"crypto/sha256"
 	"crypto/sha512"
 	"errors"
-	"fmt"
 	"math/big"
 
 	"github.com/anudeepreddy/ukey2/d2d"
@@ -502,7 +501,6 @@ func (u *UKey2Handshake) GetVerificationString(byteLength int) ([]byte, error) {
 }
 
 func (u *UKey2Handshake) ToConnectionContext() (d2d.D2DConnectionContext, error) {
-	fmt.Println("current state:", u.internalState)
 	if u.internalState != HANDSHAKE_FINISHED {
 		return nil, errors.New("unexpected state")
 	}
@@ -517,11 +515,8 @@ func (u *UKey2Handshake) ToConnectionContext() (d2d.D2DConnectionContext, error)
 
 	nextProtocolKey := utils.Hkdf(sha256.New, u.derivedSecretKey, saltNext, info, 32)
 
-	fmt.Println("next protocol key:", nextProtocolKey)
 	clientKey := utils.Hkdf(sha256.New, nextProtocolKey, d2d.D2DSalt[:], []byte("client"), 32)
-	fmt.Println("client key:", clientKey)
 	serverKey := utils.Hkdf(sha256.New, nextProtocolKey, d2d.D2DSalt[:], []byte("server"), 32)
-	fmt.Println("server key:", serverKey)
 	u.internalState = HANDSHAKE_ALREADY_USED
 
 	if u.role == CLIENT {
